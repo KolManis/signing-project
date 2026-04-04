@@ -1,6 +1,8 @@
 go 1.25.2
 
-use ./sign-service
-
+use (
+	./shared
+	./sign-service
+)
 
 // go work use ./sign-service
