@@ -1,0 +1,42 @@
+// код для генерации
+// protoc -I shared `
+//   --go_out=shared/pkg --go_opt=paths=source_relative `
+//   --go-grpc_out=shared/pkg --go-grpc_opt=paths=source_relative `
+//   shared/proto/sign/v1/sign.proto
+
+syntax = "proto3";
+
+package sign.v1;
+
+option go_package = "github.com/KolManis/signing-project/shared/pkg/proto/sign/v1;signV1";
+
+// ----------------------------
+// Сервис SignService
+// ----------------------------
+// Сервис отвечает за создание электронной подписи для документов.
+// Предполагается, что документ приходит в виде массива байт ([]byte),
+// а пользователь идентифицируется через user_id (из Gateway).
+service SignService {
+// SignDocument — RPC метод для подписи документа
+  // Вход: SignRequest — документ и идентификатор пользователя
+  // Выход: SignResponse — подпись документа и уникальный document_id
+  rpc SignDocument(SignRequest) returns (SignResponse);
+}
+
+// ----------------------------
+// Сообщение SignRequest
+// ----------------------------
+// Описывает данные, которые клиент отправляет для подписи документа.
+message SignRequest {
+  bytes document = 1;  // сам документ в виде массива байт
+  string user_id = 2;  // идентификатор пользователя (Gateway проверяет JWT)
+}
+
+// ----------------------------
+// Сообщение SignResponse
+// ----------------------------
+// Описывает ответ сервиса после подписи документа
+message SignResponse {
+  string signature = 1;    // криптографическая подпись документа
+  string document_id = 2;  // уникальный идентификатор документа для хранения или дальнейшей проверки
+}
